@@ -1,0 +1,5 @@
+accessKey: ${envAccesKey}
+secretKey: ${envSecretKey}
+
+clientId: ${envClientId}
+userPoolId: ${envUserPoolId}
