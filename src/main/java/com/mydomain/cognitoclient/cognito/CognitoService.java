@@ -114,7 +114,7 @@ public class CognitoService {
     }
 
 
-     /*
+
     public SignUpResult signUp(String name,String email,String password){
         var request = new SignUpRequest()
                 .withClientId(clientId)
@@ -122,9 +122,8 @@ public class CognitoService {
                 .withPassword(password);
 
         return client.signUp(request);
-    }*/
+    }
 
-    /*
     public ConfirmSignUpResult confirmSignUp(String email,String confirmationCode){
         var confirmRequest = new ConfirmSignUpRequest()
                             .withClientId(clientId)
@@ -132,7 +131,34 @@ public class CognitoService {
                             .withConfirmationCode(confirmationCode);
 
         return client.confirmSignUp(confirmRequest);
-    }*/
+    }
+
+    public ChangePasswordResult changePassword(String accessToken,String oldPassword,String nuevaPassword){
+        var changePassRequest = new ChangePasswordRequest()
+                .withAccessToken(accessToken)
+                .withPreviousPassword(oldPassword)
+                .withProposedPassword(nuevaPassword);
+
+        return  client.changePassword(changePassRequest);
+    }
+
+    public ForgotPasswordResult forgotPassword(String username) {
+        var request = new ForgotPasswordRequest()
+                .withClientId(clientId)
+                .withUsername(username);
+
+        var result = client.forgotPassword(request);
+        return result;
+    }
+
+    public ResendConfirmationCodeResult resendConfirmationCode(String username) {
+        var codeRequest = new ResendConfirmationCodeRequest()
+                .withClientId(clientId)
+                .withUsername(username);
+        var codeResponse = client.resendConfirmationCode(codeRequest);
+
+        return codeResponse;
+    }
 
 
 }
