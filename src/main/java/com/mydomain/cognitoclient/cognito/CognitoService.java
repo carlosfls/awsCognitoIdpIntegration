@@ -161,4 +161,44 @@ public class CognitoService {
     }
 
 
+    public String createUserPool(String userPoolName){
+        var request = new CreateUserPoolRequest()
+                .withPoolName(userPoolName);
+
+        var response = client.createUserPool(request);
+
+        logger.info(response.getUserPool().getId());
+
+        return response.getUserPool().getId();
+    }
+
+    public Map<String,String> createAppClient(String clientName,String userPoolId){
+        var request = new CreateUserPoolClientRequest()
+                .withUserPoolId(userPoolId)
+                .withClientName(clientName)
+                .withGenerateSecret(true);
+
+        var response = client.createUserPoolClient(request);
+
+        var appClient = response.getUserPoolClient();
+
+        logger.info(appClient.getClientId());
+
+        Map<String,String> clientData = new HashMap<>();
+
+        clientData.put("client_id",appClient.getClientId());
+        clientData.put("client_secret",appClient.getClientSecret());
+
+        return clientData;
+    }
+
+    public List<UserPoolDescriptionType>listUserPools(){
+        var request = new ListUserPoolsRequest()
+                .withMaxResults(10);
+
+        var response = client.listUserPools(request);
+        return response.getUserPools();
+    }
+
+
 }

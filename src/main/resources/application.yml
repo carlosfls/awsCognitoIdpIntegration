@@ -1,5 +1,3 @@
-accessKey: ${envAccesKey}
-secretKey: ${envSecretKey}
-
 clientId: ${envClientId}
 userPoolId: ${envUserPoolId}
+region: sa-east-1
