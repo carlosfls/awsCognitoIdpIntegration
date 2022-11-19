@@ -1,5 +1,6 @@
 package com.mydomain.cognitoclient.resource;
 
+import com.amazonaws.services.cognitoidp.model.UserPoolDescriptionType;
 import com.amazonaws.services.cognitoidp.model.UserType;
 import com.mydomain.cognitoclient.cognito.CognitoService;
 import com.mydomain.cognitoclient.model.SimpleCognitoUser;
@@ -36,6 +37,11 @@ public class CognitoResource {
     public ResponseEntity<List<UserType>>listUsers(){
         var users = cognitoService.listUsers();
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/usersPool")
+    public ResponseEntity<List<UserPoolDescriptionType>>listsUsersPools(){
+        return ResponseEntity.ok(cognitoService.listUserPools());
     }
 
 

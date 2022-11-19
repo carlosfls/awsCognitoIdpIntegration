@@ -160,8 +160,15 @@ public class CognitoService {
         return codeResponse;
     }
 
+    public List<UserPoolDescriptionType>listUserPools(){
+        var request = new ListUserPoolsRequest()
+                .withMaxResults(10);
 
-    public String createUserPool(String userPoolName){
+        var response = client.listUserPools(request);
+        return response.getUserPools();
+    }
+
+    public Map<String,String> createUserPool(String userPoolName){
         var request = new CreateUserPoolRequest()
                 .withPoolName(userPoolName);
 
@@ -169,13 +176,28 @@ public class CognitoService {
 
         logger.info(response.getUserPool().getId());
 
-        return response.getUserPool().getId();
+        var userPool = response.getUserPool();
+
+        Map<String,String>dataUserPool = new HashMap<>();
+        dataUserPool.put("Id",userPool.getId());
+        dataUserPool.put("status",userPool.getStatus());
+        dataUserPool.put("domain",userPool.getDomain());
+
+        return dataUserPool;
     }
 
-    public Map<String,String> createAppClient(String clientName,String userPoolId){
+    public Map<String,String> createAppClient(String clientName){
         var request = new CreateUserPoolClientRequest()
-                .withUserPoolId(userPoolId)
+                .withUserPoolId(userPool)
                 .withClientName(clientName)
+                .withExplicitAuthFlows(
+                        ExplicitAuthFlowsType.ADMIN_NO_SRP_AUTH,
+                        ExplicitAuthFlowsType.ALLOW_REFRESH_TOKEN_AUTH,
+                        ExplicitAuthFlowsType.ALLOW_ADMIN_USER_PASSWORD_AUTH,
+                        ExplicitAuthFlowsType.USER_PASSWORD_AUTH,
+                        ExplicitAuthFlowsType.ALLOW_USER_SRP_AUTH
+                )
+                .withAllowedOAuthFlows(OAuthFlowType.Client_credentials)
                 .withGenerateSecret(true);
 
         var response = client.createUserPoolClient(request);
@@ -188,16 +210,35 @@ public class CognitoService {
 
         clientData.put("client_id",appClient.getClientId());
         clientData.put("client_secret",appClient.getClientSecret());
+        clientData.put("creation_date",appClient.getCreationDate().toString());
 
         return clientData;
     }
 
-    public List<UserPoolDescriptionType>listUserPools(){
-        var request = new ListUserPoolsRequest()
-                .withMaxResults(10);
+    public void deleteAppClient(String clientId){
+        var deleteClientRequest = new DeleteUserPoolClientRequest()
+                .withClientId(clientId)
+                .withUserPoolId(userPool);
+        client.deleteUserPoolClient(deleteClientRequest);
+    }
 
-        var response = client.listUserPools(request);
-        return response.getUserPools();
+
+    public List<ResourceServerType>listResourceServers(){
+        var request = new ListResourceServersRequest()
+                .withMaxResults(50)
+                .withUserPoolId(userPool);
+
+        var response = client.listResourceServers(request);
+        return response.getResourceServers();
+    }
+
+    public List<UserPoolClientDescription>listUserPoolClients(){
+        var request = new ListUserPoolClientsRequest()
+                .withMaxResults(50)
+                .withUserPoolId(userPool);
+        var response = client.listUserPoolClients(request);
+
+        return response.getUserPoolClients();
     }
 
 
